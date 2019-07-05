@@ -7,7 +7,6 @@ spec:
   secretName: fruits-certificate
   issuerRef:
     name: vault-issuer
-    kind: issuer
-  commonName: testlab.local
+  commonName: fruits.testlab.local
   dnsNames:
   - fruits.testlab.local

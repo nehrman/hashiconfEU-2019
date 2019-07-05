@@ -9,5 +9,5 @@ spec:
       tokenSecretRef:
         name: cert-manager-vault-token
         key: token
-    path: pki_int/sign/cert-manager
+    path: pki_int/sign/fruits-catalog
     server: http://${vault_address}

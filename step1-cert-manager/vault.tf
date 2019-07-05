@@ -35,7 +35,7 @@ resource "vault_pki_secret_backend_root_sign_intermediate" "pki" {
   backend = "${vault_pki_secret_backend.pki.path}"
 
   csr         = "${vault_pki_secret_backend_intermediate_cert_request.pki_int.csr}"
-  common_name = "TestLab Intermediate CA"
+  common_name = "testlab.local"
   ttl         = "157680000"
   format      = "pem_bundle"
 }
@@ -67,29 +67,25 @@ resource "vault_pki_secret_backend_config_urls" "config_urls_int" {
   crl_distribution_points = ["http://192.168.1.18:8300/v1/pki_int/crl"]
 }
 
-resource "vault_policy" "cert-manager" {
-  name = "cert-manager"
+resource "vault_policy" "fruits-catalog" {
+  name = "fruits-catalog"
 
   policy = <<EOT
-path "pki_int/sign/cert-manager" {
+path "pki_int/sign/fruits-catalog" {
   capabilities = ["read", "update", "list", "delete"]
 }
 
-path "pki_int/sign/cert-manager/*" {
-  capabilities = ["read", "update", "list", "delete"]
-}
-
-path "pki_int/issue/cert-manager" {
+path "pki_int/issue/fruits-catalog" {
   capabilities = ["read", "update", "list", "delete"]
 }
 EOT
 }
 
-resource "vault_token" "cert-manager" {
-  policies = ["cert-manager"]
+resource "vault_token" "fruits-catalog" {
+  policies = ["fruits-catalog"]
 
   renewable = true
-  ttl       = "768h"
+  ttl       = "24h"
 
   renew_min_lease = 43200
   renew_increment = 86400

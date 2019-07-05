@@ -28,23 +28,15 @@ resource "helm_release" "cert-manager" {
 resource "kubernetes_secret" "cert-manager" {
   metadata {
     name      = "cert-manager-vault-token"
-    namespace = "cert-manager"
-  }
-
-  data {
-    token = "cm9vdAo="
-  }
-}
-
-resource "kubernetes_secret" "cert-manager-test" {
-  metadata {
-    name      = "cert-manager-vault-token"
     namespace = "${var.namespace}"
   }
 
   data {
-    token = "cm9vdAo="
+    token = "${vault_token.fruits-catalog.client_token}"
   }
+
+  type = "opaque"
+
 }
 
 resource "local_file" "vault-issuer" {

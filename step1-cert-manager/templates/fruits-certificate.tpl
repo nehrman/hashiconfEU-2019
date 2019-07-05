@@ -7,7 +7,6 @@ spec:
   secretName: ${secretname}
   issuerRef:
     name: vault-issuer
-    kind: issuer
-  commonName: ${commonname}
+  commonName: ${dns_names}.${commonname}
   dnsNames:
   - ${dns_names}.${commonname}
