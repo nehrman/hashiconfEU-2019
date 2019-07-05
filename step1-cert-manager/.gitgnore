@@ -1,0 +1,8 @@
+.terraform
+.git
+*.tfstate
+*.backup
+*.tfvars
+*.retry
+*.rli
+inventory

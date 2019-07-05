@@ -1,6 +1,6 @@
 ./.terraform
 ./*.tfstate
 ./*.tfstate.*
-./*/terraform
+./*/.terraform
 ./*/*.tfstate
 ./*/*.tfstate.*
