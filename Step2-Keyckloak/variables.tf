@@ -10,7 +10,7 @@ variable "vault_token" {
 
 variable "vault_addr" {
   description = "Vault Address to connect to"
-  default     = "192.168.1.18:8300"
+  default     = "192.168.94.141:8200"
 }
 
 variable "namespace" {

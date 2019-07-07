@@ -4,3 +4,10 @@
 ./*/.terraform
 ./*/*.tfstate
 ./*/*.tfstate.*
+.terraform
+.git
+*.tfstate
+*.backup
+*.tfvars
+*.retry
+*.rli

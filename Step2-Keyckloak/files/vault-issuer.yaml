@@ -10,4 +10,4 @@ spec:
         name: cert-manager-vault-token
         key: token
     path: pki_int/sign/fruits-catalog
-    server: http://192.168.1.18:8300
+    server: http://192.168.94.141:8200

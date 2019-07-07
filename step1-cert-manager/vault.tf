@@ -57,14 +57,14 @@ resource "vault_pki_secret_backend_role" "fruits-catalog" {
 
 resource "vault_pki_secret_backend_config_urls" "config_urls_root" {
   backend                 = "${vault_pki_secret_backend.pki.path}"
-  issuing_certificates    = ["http://192.168.1.18:8300/v1/pki/ca"]
-  crl_distribution_points = ["http://192.168.1.18:8300/v1/pki/crl"]
+  issuing_certificates    = ["http://${var.vault_addr}/v1/pki/ca"]
+  crl_distribution_points = ["http://${var.vault_addr}/v1/pki/crl"]
 }
 
 resource "vault_pki_secret_backend_config_urls" "config_urls_int" {
   backend                 = "${vault_pki_secret_backend.pki_int.path}"
-  issuing_certificates    = ["http://192.168.1.18:8300/v1/pki_int/ca"]
-  crl_distribution_points = ["http://192.168.1.18:8300/v1/pki_int/crl"]
+  issuing_certificates    = ["http://${var.vault_addr}/v1/pki_int/ca"]
+  crl_distribution_points = ["http://${var.vault_addr}/v1/pki_int/crl"]
 }
 
 resource "vault_policy" "fruits-catalog" {
