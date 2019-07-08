@@ -1,0 +1,111 @@
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: mongodb
+  namespace: fruits-catalog
+  generation: 3
+  labels:
+    app: fruits-catalog
+    container: mongodb
+  annotations:
+    deployment.kubernetes.io/revision: '3'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fruits-catalog
+      container: mongodb
+      deploymentconfig: mongodb
+  template:
+    metadata:
+      namespace: default
+      creationTimestamp: 
+      labels:
+        app: fruits-catalog
+        container: mongodb
+        deploymentconfig: mongodb
+      annotations:
+        consul.hashicorp.com/connect-inject: 'true'
+        consul.hashicorp.com/connect-service: mongodb
+        consul.hashicorp.com/connect-service-port: '27017'
+    spec:
+      volumes:
+      - name: mongodb-data
+        persistentVolumeClaim:
+          claimName: mongodb
+      containers:
+      - name: mongodb
+        image: centos/mongodb-32-centos7:latest
+        ports:
+        - containerPort: 27017
+          protocol: TCP
+        env:
+        - name: MONGODB_USER
+          valueFrom:
+            secretKeyRef:
+              name: mongodb
+              key: database-user
+        - name: MONGODB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb
+              key: database-password
+        - name: MONGODB_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb
+              key: database-admin-password
+        - name: MONGODB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: mongodb
+              key: database-name
+        resources:
+          limits:
+            memory: 512M
+        volumeMounts:
+        - name: mongodb-data
+          mountPath: "/var/lib/mongodb/data"
+        livenessProbe:
+          tcpSocket:
+            port: 27017
+          initialDelaySeconds: 3
+          timeoutSeconds: 1
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - "/bin/sh"
+            - "-i"
+            - "-c"
+            - mongo 127.0.0.1:27017/$MONGODB_DATABASE -u $MONGODB_USER -p $MONGODB_PASSWORD
+              --eval="quit()"
+          initialDelaySeconds: 3
+          timeoutSeconds: 1
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        terminationMessagePath: "/dev/termination-log"
+        terminationMessagePolicy: File
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          capabilities: {}
+          privileged: false
+          runAsUser: 0
+          runAsGroup: 0
+          runAsNonRoot: false
+          readOnlyRootFilesystem: false
+          allowPrivilegeEscalation: true
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      automountServiceAccountToken: false
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: Recreate
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600

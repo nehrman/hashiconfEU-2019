@@ -1,0 +1,252 @@
+{
+    "kind": "Deployment",
+    "apiVersion": "extensions/v1beta1",
+    "metadata": {
+      "name": "fruits-catalog",
+      "namespace": "fruits-catalog",
+      "selfLink": "/apis/extensions/v1beta1/namespaces/fruits-catalog/deployments/fruits-catalog",
+      "uid": "b727e8e1-5feb-44bc-b60e-c1bba2dda530",
+      "resourceVersion": "83881",
+      "generation": 1,
+      "creationTimestamp": "2019-07-07T17:07:09Z",
+      "labels": {
+        "app": "fruits-catalog",
+        "group": "com.github.lbroudoux.msa",
+        "provider": "fabric8",
+        "version": "1.0.0-SNAPSHOT"
+      },
+      "annotations": {
+        "deployment.kubernetes.io/revision": "1",
+        "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"extensions/v1beta1\",\"kind\":\"Deployment\",\"metadata\":{\"annotations\":{},\"labels\":{\"app\":\"fruits-catalog\",\"group\":\"com.github.lbroudoux.msa\",\"provider\":\"fabric8\",\"version\":\"1.0.0-SNAPSHOT\"},\"name\":\"fruits-catalog\",\"namespace\":\"fruits-catalog\"},\"spec\":{\"replicas\":1,\"selector\":{\"matchLabels\":{\"app\":\"fruits-catalog\",\"group\":\"com.github.lbroudoux.msa\",\"provider\":\"fabric8\"}},\"strategy\":{\"rollingUpdate\":{\"maxSurge\":1,\"maxUnavailable\":1},\"type\":\"RollingUpdate\"},\"template\":{\"metadata\":{\"annotations\":{\"consul.hashicorp.com/connect-inject\":\"true\",\"consul.hashicorp.com/connect-service-upstreams\":\"mongodb:27017\"},\"labels\":{\"app\":\"fruits-catalog\",\"group\":\"com.github.lbroudoux.msa\",\"provider\":\"fabric8\",\"version\":\"1.0.0-SNAPSHOT\"}},\"spec\":{\"containers\":[{\"command\":[\"sh\",\"-c\",\"X_VAULT_TOKEN=$(cat /etc/vault/token); VAULT_LEASE_ID=$(cat /etc/app/creds.json | jq -j '.lease_id'); while true; do\\n  curl -k -s --request PUT --header \\\"X-Vault-Token: $X_VAULT_TOKEN\\\" --data '{\\\"lease_id\\\": \\\"'\\\"$VAULT_LEASE_ID\\\"'\\\", \\\"increment\\\": 3600}' https://192.168.94.141:8200/v1/sys/leases/renew;\\n  echo 'Waiting for 360 sec before renewing lease'\\n  sleep 360;\\ndone\\n\"],\"image\":\"quay.io/lbroudoux/ubi8:latest\",\"lifecycle\":{\"preStop\":{\"exec\":{\"command\":[\"sh\",\"-c\",\"X_VAULT_TOKEN=$(cat /etc/vault/token); VAULT_LEASE_ID=$(cat /etc/app/creds.json | jq -j '.lease_id'); curl -k --request PUT --header \\\"X-Vault-Token: $X_VAULT_TOKEN\\\" --data '{\\\"lease_id\\\": \\\"'\\\"$VAULT_LEASE_ID\\\"'\\\"}' https://192.168.94.141:8200/v1/sys/leases/revoke;\\n\"]}}},\"name\":\"vault-lease-refresher\",\"volumeMounts\":[{\"mountPath\":\"/etc/app\",\"name\":\"app-creds\"},{\"mountPath\":\"/etc/vault\",\"name\":\"vault-token\"}]},{\"env\":[{\"name\":\"KEYCLOAK_URL\",\"value\":\"https://keycloak.testlab.local/auth\"},{\"name\":\"KUBERNETES_NAMESPACE\",\"valueFrom\":{\"fieldRef\":{\"apiVersion\":\"v1\",\"fieldPath\":\"metadata.namespace\"}}}],\"image\":\"msa/fruits-catalog:latest\",\"imagePullPolicy\":\"IfNotPresent\",\"livenessProbe\":{\"failureThreshold\":3,\"httpGet\":{\"path\":\"/actuator/health\",\"port\":8080,\"scheme\":\"HTTP\"},\"initialDelaySeconds\":15,\"periodSeconds\":10,\"successThreshold\":1,\"timeoutSeconds\":3},\"name\":\"spring-boot\",\"ports\":[{\"containerPort\":8080,\"name\":\"http\",\"protocol\":\"TCP\"},{\"containerPort\":9779,\"name\":\"prometheus\",\"protocol\":\"TCP\"},{\"containerPort\":8778,\"name\":\"jolokia\",\"protocol\":\"TCP\"}],\"readinessProbe\":{\"failureThreshold\":3,\"httpGet\":{\"path\":\"/actuator/health\",\"port\":8080,\"scheme\":\"HTTP\"},\"initialDelaySeconds\":15,\"periodSeconds\":10,\"successThreshold\":1,\"timeoutSeconds\":3},\"resources\":{\"limits\":{\"cpu\":\"1\",\"memory\":\"256Mi\"},\"requests\":{\"cpu\":\"200m\",\"memory\":\"256Mi\"}},\"securityContext\":{\"privileged\":false},\"terminationMessagePath\":\"/dev/termination-log\",\"terminationMessagePolicy\":\"File\",\"volumeMounts\":[{\"mountPath\":\"/etc/app\",\"name\":\"app-creds\"},{\"mountPath\":\"/etc/vault\",\"name\":\"vault-token\"},{\"mountPath\":\"/deployments/config\",\"name\":\"app-config\"}]}],\"dnsPolicy\":\"ClusterFirst\",\"initContainers\":[{\"command\":[\"sh\",\"-c\",\"MINIKUBE_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token); curl -k --request POST --data '{\\\"jwt\\\": \\\"'\\\"$MINIKUBE_TOKEN\\\"'\\\", \\\"role\\\": \\\"fruits-catalog\\\"}' http://192.168.94.141:8200/v1/auth/minikube/login | jq -j '.auth.client_token' \\u003e /etc/vault/token; X_VAULT_TOKEN=$(cat /etc/vault/token); curl -k --header \\\"X-Vault-Token: $X_VAULT_TOKEN\\\" http://192.168.94.141:8200/v1/mongodbconf/creds/fruits-catalog-role \\u003e /etc/app/creds.json; echo \\\"spring.data.mongodb.uri=mongodb://$(jq -j '.data.username' /etc/app/creds.json):$(jq -j '.data.password' /etc/app/creds.json)@mongodb/sampledb\\\" \\u003e /etc/app/application.properties; cp /etc/app/application.properties /deployments/config/application.properties\\n\"],\"image\":\"quay.io/lbroudoux/ubi8:latest\",\"name\":\"vault-init\",\"volumeMounts\":[{\"mountPath\":\"/etc/app\",\"name\":\"app-creds\"},{\"mountPath\":\"/etc/vault\",\"name\":\"vault-token\"},{\"mountPath\":\"/deployments/config\",\"name\":\"app-config\"}]}],\"restartPolicy\":\"Always\",\"schedulerName\":\"default-scheduler\",\"securityContext\":{},\"serviceAccount\":\"vault-auth\",\"serviceAccountName\":\"vault-auth\",\"terminationGracePeriodSeconds\":30,\"volumes\":[{\"emptyDir\":{},\"name\":\"app-creds\"},{\"emptyDir\":{},\"name\":\"app-config\"},{\"emptyDir\":{},\"name\":\"vault-token\"}]}}}}\n"
+      }
+    },
+    "spec": {
+      "replicas": 1,
+      "selector": {
+        "matchLabels": {
+          "app": "fruits-catalog",
+          "group": "com.github.lbroudoux.msa",
+          "provider": "fabric8"
+        }
+      },
+      "template": {
+        "metadata": {
+          "creationTimestamp": null,
+          "labels": {
+            "app": "fruits-catalog",
+            "group": "com.github.lbroudoux.msa",
+            "provider": "fabric8",
+            "version": "1.0.0-SNAPSHOT"
+          },
+          "annotations": {
+            "consul.hashicorp.com/connect-inject": "true",
+            "consul.hashicorp.com/connect-service-upstreams": "mongodb:27017"
+          }
+        },
+        "spec": {
+          "volumes": [
+            {
+              "name": "app-creds",
+              "emptyDir": {}
+            },
+            {
+              "name": "app-config",
+              "emptyDir": {}
+            },
+            {
+              "name": "vault-token",
+              "emptyDir": {}
+            }
+          ],
+          "initContainers": [
+            {
+              "name": "vault-init",
+              "image": "quay.io/lbroudoux/ubi8:latest",
+              "command": [
+                "sh",
+                "-c",
+                "MINIKUBE_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token); curl -k --request POST --data '{\"jwt\": \"'\"$MINIKUBE_TOKEN\"'\", \"role\": \"fruits-catalog\"}' http://192.168.94.141:8200/v1/auth/minikube/login | jq -j '.auth.client_token' > /etc/vault/token; X_VAULT_TOKEN=$(cat /etc/vault/token); curl -k --header \"X-Vault-Token: $X_VAULT_TOKEN\" http://192.168.94.141:8200/v1/mongodbconf/creds/fruits-catalog-role > /etc/app/creds.json; echo \"spring.data.mongodb.uri=mongodb://$(jq -j '.data.username' /etc/app/creds.json):$(jq -j '.data.password' /etc/app/creds.json)@mongodb/sampledb\" > /etc/app/application.properties; cp /etc/app/application.properties /deployments/config/application.properties\n"
+              ],
+              "resources": {},
+              "volumeMounts": [
+                {
+                  "name": "app-creds",
+                  "mountPath": "/etc/app"
+                },
+                {
+                  "name": "vault-token",
+                  "mountPath": "/etc/vault"
+                },
+                {
+                  "name": "app-config",
+                  "mountPath": "/deployments/config"
+                }
+              ],
+              "terminationMessagePath": "/dev/termination-log",
+              "terminationMessagePolicy": "File",
+              "imagePullPolicy": "Always"
+            }
+          ],
+          "containers": [
+            {
+              "name": "vault-lease-refresher",
+              "image": "quay.io/lbroudoux/ubi8:latest",
+              "command": [
+                "sh",
+                "-c",
+                "X_VAULT_TOKEN=$(cat /etc/vault/token); VAULT_LEASE_ID=$(cat /etc/app/creds.json | jq -j '.lease_id'); while true; do\n  curl -k -s --request PUT --header \"X-Vault-Token: $X_VAULT_TOKEN\" --data '{\"lease_id\": \"'\"$VAULT_LEASE_ID\"'\", \"increment\": 3600}' https://192.168.94.141:8200/v1/sys/leases/renew;\n  echo 'Waiting for 360 sec before renewing lease'\n  sleep 360;\ndone\n"
+              ],
+              "resources": {},
+              "volumeMounts": [
+                {
+                  "name": "app-creds",
+                  "mountPath": "/etc/app"
+                },
+                {
+                  "name": "vault-token",
+                  "mountPath": "/etc/vault"
+                }
+              ],
+              "lifecycle": {
+                "preStop": {
+                  "exec": {
+                    "command": [
+                      "sh",
+                      "-c",
+                      "X_VAULT_TOKEN=$(cat /etc/vault/token); VAULT_LEASE_ID=$(cat /etc/app/creds.json | jq -j '.lease_id'); curl -k --request PUT --header \"X-Vault-Token: $X_VAULT_TOKEN\" --data '{\"lease_id\": \"'\"$VAULT_LEASE_ID\"'\"}' https://192.168.94.141:8200/v1/sys/leases/revoke;\n"
+                    ]
+                  }
+                }
+              },
+              "terminationMessagePath": "/dev/termination-log",
+              "terminationMessagePolicy": "File",
+              "imagePullPolicy": "Always"
+            },
+            {
+              "name": "spring-boot",
+              "image": "msa/fruits-catalog:latest",
+              "ports": [
+                {
+                  "name": "http",
+                  "containerPort": 8080,
+                  "protocol": "TCP"
+                },
+                {
+                  "name": "prometheus",
+                  "containerPort": 9779,
+                  "protocol": "TCP"
+                },
+                {
+                  "name": "jolokia",
+                  "containerPort": 8778,
+                  "protocol": "TCP"
+                }
+              ],
+              "env": [
+                {
+                  "name": "KEYCLOAK_URL",
+                  "value": "https://keycloak.testlab.local/auth"
+                },
+                {
+                  "name": "KUBERNETES_NAMESPACE",
+                  "valueFrom": {
+                    "fieldRef": {
+                      "apiVersion": "v1",
+                      "fieldPath": "metadata.namespace"
+                    }
+                  }
+                }
+              ],
+              "resources": {
+                "limits": {
+                  "cpu": "1",
+                  "memory": "256Mi"
+                },
+                "requests": {
+                  "cpu": "200m",
+                  "memory": "256Mi"
+                }
+              },
+              "volumeMounts": [
+                {
+                  "name": "app-creds",
+                  "mountPath": "/etc/app"
+                },
+                {
+                  "name": "vault-token",
+                  "mountPath": "/etc/vault"
+                },
+                {
+                  "name": "app-config",
+                  "mountPath": "/deployments/config"
+                }
+              ],
+              "livenessProbe": {
+                "httpGet": {
+                  "path": "/actuator/health",
+                  "port": 8080,
+                  "scheme": "HTTP"
+                },
+                "initialDelaySeconds": 15,
+                "timeoutSeconds": 3,
+                "periodSeconds": 10,
+                "successThreshold": 1,
+                "failureThreshold": 3
+              },
+              "readinessProbe": {
+                "httpGet": {
+                  "path": "/actuator/health",
+                  "port": 8080,
+                  "scheme": "HTTP"
+                },
+                "initialDelaySeconds": 15,
+                "timeoutSeconds": 3,
+                "periodSeconds": 10,
+                "successThreshold": 1,
+                "failureThreshold": 3
+              },
+              "terminationMessagePath": "/dev/termination-log",
+              "terminationMessagePolicy": "File",
+              "imagePullPolicy": "IfNotPresent",
+              "securityContext": {
+                "privileged": false
+              }
+            }
+          ],
+          "restartPolicy": "Always",
+          "terminationGracePeriodSeconds": 30,
+          "dnsPolicy": "ClusterFirst",
+          "serviceAccountName": "vault-auth",
+          "serviceAccount": "vault-auth",
+          "securityContext": {},
+          "schedulerName": "default-scheduler"
+        }
+      },
+      "strategy": {
+        "type": "RollingUpdate",
+        "rollingUpdate": {
+          "maxUnavailable": 1,
+          "maxSurge": 1
+        }
+      },
+      "revisionHistoryLimit": 2147483647,
+      "progressDeadlineSeconds": 2147483647
+    },
+    "status": {
+      "observedGeneration": 1,
+      "replicas": 1,
+      "updatedReplicas": 1,
+      "readyReplicas": 1,
+      "availableReplicas": 1,
+      "conditions": [
+        {
+          "type": "Available",
+          "status": "True",
+          "lastUpdateTime": "2019-07-07T17:07:09Z",
+          "lastTransitionTime": "2019-07-07T17:07:09Z",
+          "reason": "MinimumReplicasAvailable",
+          "message": "Deployment has minimum availability."
+        }
+      ]
+    }
+  }

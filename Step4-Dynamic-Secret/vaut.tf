@@ -1,6 +1,6 @@
 resource "vault_mount" "mongodb" {
   type = "database"
-  path = "mongodb"
+  path = "mongodbconf"
 }
 
 resource "vault_database_secret_backend_connection" "mongodb" {
@@ -26,7 +26,7 @@ resource "vault_policy" "fruits-catalog-dynamic" {
   name = "fruits-catalog-dynamic"
 
   policy = <<EOT
-path "mongodb/creds/fruits-catalog-role" {
+path "mongodbconf/creds/fruits-catalog-role" {
   capabilities = ["read"]
 }
 path "sys/leases/renew" {
