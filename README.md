@@ -8,7 +8,7 @@ It demonstrates how to highly secure a java application without touching code an
 - Step 4 : Adding even more security with Vault Dynamic Secrets for MongoDB
 - Step 5 : Introduce service segmentation with Consul Connect
 
-<img width="800" alt="Demo Workflow" src="./Assets/workflow.png">
+<img width="800" alt="Demo Workflow" src="./Assets/Workflow.png">
 
 Each steps will be detailed in its own folder.
 
