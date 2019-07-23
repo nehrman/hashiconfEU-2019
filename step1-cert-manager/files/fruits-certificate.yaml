@@ -1,0 +1,12 @@
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: fruits-certificate
+  namespace: fruits-catalog
+spec:
+  secretName: fruits-certificate
+  issuerRef:
+    name: vault-issuer
+  commonName: fruits.testlab.local
+  dnsNames:
+  - fruits.testlab.local
