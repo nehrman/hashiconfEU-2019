@@ -12,7 +12,7 @@ Here are the technologies and features used in this demo:
 
 But, wait, what does it means in terms of architecture ?
 
-<img width="800" alt="Step 1" src="./Assets/SecureYourApp_Step1.png">
+<img width="800" alt="Step 1" src="../Assets/SecureYourApp_Step1.png">
 
 
 
