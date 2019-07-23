@@ -14,7 +14,7 @@ Each steps will be detailed in its own folder.
 
 ## Special thanks
 
-* **Laurent Broudouc** - For the App code and for working together on that project [Github](https://github.com/lbroudoux)
+* **Laurent Broudoux** - For the App code and for working together on that project [Github](https://github.com/lbroudoux)
 
 ## Authors
 
