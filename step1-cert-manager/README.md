@@ -100,7 +100,7 @@ Of course, we will not cover how to [download](https://releases.hashicorp.com/te
     ```
 
     You should end up with something like this:
-    <img width="800" alt="Minikube Started" src="../Assets/Step1_tfapply.png">
+    <img width="800" alt="Terraform Apply" src="../Assets/Step1_tfapply.png">
 
     **Store somewhere the admin password for MongoDB Database as it will be used in a later step**
 
@@ -109,7 +109,7 @@ Of course, we will not cover how to [download](https://releases.hashicorp.com/te
     $>kubectl get pods --all-namespaces
     ```
 
-    <img width="800" alt="Minikube Started" src="../Assets/Step1_Pods.png">
+    <img width="800" alt="Checks Pods" src="../Assets/Step1_Pods.png">
 
 ## Finally, you can deploy the fruits-catalog app using Fabric8 and Maven
 Last task for finalizing this demo is to build and deploy fruits-catalog application from its repos.
@@ -130,13 +130,13 @@ Last task for finalizing this demo is to build and deploy fruits-catalog applica
     ```
 
     You should end up with something like this:
-    <img width="800" alt="Minikube Started" src="../Assets/Step1_fabric8.png">
+    <img width="800" alt="Build App with Maven" src="../Assets/Step1_fabric8.png">
 
 3. **It's time to test if certificate is well generated and configured and if everything works** - Now, let's retrieve the CA Certificate Chain and configure our laptop to trust the certificate and test https connection to the app.
     - Retrieve the certificate from Vault UI and import it on your favorite browser:
-    <img width="800" alt="Minikube Started" src="../Assets/Step1_ca_certificate.png">
+    <img width="800" alt="Download CA Chain" src="../Assets/Step1_ca_certificate.png">
     - Connect with your favorite browser to **https://fruits.testlab.local** (If it's not already done, create an entry in your host with the minikube's IP pointing to fruits.testlab.local)
-    <img width="800" alt="Minikube Started" src="../Assets/Step1_cert-valid.png">
+    <img width="800" alt="Valid Certificate" src="../Assets/Step1_cert_valid.png">
 
 *Congrats*, you finally deploy and configure a way to automatically generate certificate with cert-manager and vault for your ingress routes to secure your applications.
 
