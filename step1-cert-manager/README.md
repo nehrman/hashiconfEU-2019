@@ -101,6 +101,7 @@ Of course, we will not cover how to [download](https://releases.hashicorp.com/te
 
     You should end up with something like this:
     <img width="800" alt="Minikube Started" src="../Assets/Step1_tfapply.png">
+
     **Store somewhere the admin password for MongoDB Database as it will be used in a later step**
 
     You can also check the state of all the newly created pods by running the command:
@@ -131,15 +132,15 @@ Last task for finalizing this demo is to build and deploy fruits-catalog applica
     You should end up with something like this:
     <img width="800" alt="Minikube Started" src="../Assets/Step1_fabric8.png">
 
-3. **It's time to test if certificate is well generated and configured** - 
+3. **It's time to test if certificate is well generated and configured and if everything works** - Now, let's retrieve the CA Certificate Chain and configure our laptop to trust the certificate and test https connection to the app.
+    - Retrieve the certificate from Vault UI and import it on your favorite browser:
+    <img width="800" alt="Minikube Started" src="../Assets/Step1_ca_certificate.png">
+    - Connect with your favorite browser to **https://fruits.testlab.local** (If it's not already done, create an entry in your host with the minikube's IP pointing to fruits.testlab.local)
+    <img width="800" alt="Minikube Started" src="../Assets/Step1_cert-valid.png">
 
+*Congrats*, you finally deploy and configure a way to automatically generate certificate with cert-manager and vault for your ingress routes to secure your applications.
 
-
-
-
-
-
-
+Now, because it's not enough, let's move on to step 2 and add Keycloak for Authorization.
 
 ## Special thanks
 
