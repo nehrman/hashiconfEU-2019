@@ -11,9 +11,9 @@ Here are the technologies and features used in this demo:
 - [Fabric8](https://fabric8.io/)
 - [Keycloak](https://www.keycloak.org/)
 
-As always, let's look at what we're gonna do in terms of workflow and architetcure.
+As always, let's look at what we're gonna do in terms of workflow and architecture.
 
-<img width="800" alt="Step 1" src="../Assets/SecureYourApp_Step2.png">
+<img width="800" alt="Step 2" src="../Assets/SecureYourApp_Step2.png">
 
 
 ## Special thanks
