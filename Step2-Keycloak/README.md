@@ -97,7 +97,7 @@ Keycloak is configured, so, now, we need to deploy the new version of our app th
     <img width="800" alt="Fruits Good" src="../Assets/Step2_Fruits_good.png">
 
     - Add a new fruit for validating everything is working:
-    <img width="800" alt="Fruits API" src="../Assets/Step2_Fruits_aoi.png">
+    <img width="800" alt="Fruits API" src="../Assets/Step2_Fruits_api.png">
 
 *Congrats*, you finally deploy and configure Keycloak to add AuthN and AuthZ to your application without modifying a lot of code in your app.
 
