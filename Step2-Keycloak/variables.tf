@@ -4,7 +4,7 @@ variable "keycloak_namespace" {
 }
 
 variable "vault_token" {
-  description = "Token for connectiong to Vault"
+  description = "Token for connecting to Vault"
   default     = ""
 }
 
@@ -14,7 +14,7 @@ variable "vault_addr" {
 }
 
 variable "namespace" {
-  description = "Namespace where to deploy thongs on K8s"
+  description = "Namespace where to deploy things on K8s"
   default     = "keycloak"
 }
 

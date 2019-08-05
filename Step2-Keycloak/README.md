@@ -109,7 +109,7 @@ Keycloak is configured, so, now, we need to deploy the new version of our app th
 
 *Congrats*, you finally deploy and configure Keycloak to add AuthN and AuthZ to your application without modifying a lot of code in your app.
 
-We're ready to move on to step 3 and add Static Secret management with by using K8S Auth method.
+We're ready to move on to step 3 and add Static Secret management by using K8S Auth method.
 
 ## Special thanks
 

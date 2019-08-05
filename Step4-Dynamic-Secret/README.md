@@ -14,7 +14,7 @@ Here are the technologies and features used in this demo:
 
 As always, let's look at what we're gonna do in terms of workflow and architecture.
 
-<img width="800" alt="Step 2" src="../Assets/SecureYourApp_Step3.png">
+<img width="800" alt="Step 2" src="../Assets/SecureYourApp_Step4.png">
 
 ## Ok, now, we're ready to use terraform code to deploy step 3
 Of course, we will not cover how to [download](https://releases.hashicorp.com/terraform/) and [configure](https://learn.hashicorp.com/terraform/getting-started/install.html) it, as we supposed you already have it.
