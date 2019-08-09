@@ -104,7 +104,7 @@ To ensure everything is work as expected, foolow the below steps.
 
     - Vaildate that all your previous fruits are still there and that you can add more.
 
-     <img width="800" alt="Fruits Catalog Working" src="../Assets/Step3app_working_.png">
+     <img width="800" alt="Fruits Catalog Working" src="../Assets/Step3_app_working_.png">
 
 
 *Congrats*, without touching your application code, you add a non negligeable security layer by externalizing and centralizing your secrets on Vault.
