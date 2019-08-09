@@ -12,4 +12,3 @@ variable "namespace" {
   description = "Namespace where to deploy thongs on K8s"
   default     = "fruits-catalog"
 }
-

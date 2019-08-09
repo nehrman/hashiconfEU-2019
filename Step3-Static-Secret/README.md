@@ -5,7 +5,7 @@ Just a quick reminder on what we did so far :
 - Step 1 : Use Jetstack/cert-manager and Vault to provide TLS for Ingress Traffic
 - Step 2 : Adding Authentication and Authorization with Keycloak
 
-Now, that's the third step of our journey to a highly secure application where we're gonna introduce Static Secrets management with [Vault](https://www.vaultproject.io) from Hashicorp in order to not rely on Kubernetes secrets. 
+Now, that's the third step of our journey to a highly secure application where we're gonna introduce Static Secrets management with [Vault](https://www.vaultproject.io) from Hashicorp in order to not rely on Kubernetes secrets but provide a more secure way to distribute secrets.
 
 Here are the technologies and features used in this demo:
 - [Terraform](https://www.terraform.io)
@@ -23,15 +23,26 @@ Of course, we will not cover how to [download](https://releases.hashicorp.com/te
     ```bash
     export VAULT_TOKEN=root
     ```
-    That's the only variable we have to configure for vault  provider for terraform. All others variables are defined in the **variables.tf** file.
+    That's the only variable we have to configure for vault provider for terraform. All others variables are defined in the **variables.tf** file.
 
-2. **Analyze the code to understand what we're gonna do** - Yeah, even if most of the tasks are automated, it is still interesting to understand what the code will do:
-    - Configure a Vault-Issuer for cert-manager in the keycloak namespace
-    - Configure a specific ingress route for Keycloak with SSL
-    - Configure a specific Role in Vault and create a token used by Vault-Issuer
-    - deploy and configure Keycloak on K8s
+2. **Import Fruits-catalog Deployment in your State file** - And probably you're asking yourself why ? In fact, in step 1 and 2 we used Fabric8 to  build and deploy our Application on K8s. But now, we're gonna use Terraform to be able to automate our apps deployment. In order to do that, we     have to use that command:
+    ```bash
+    $>terraform import kubernetes_deployment.fruits-catalog fruits-catalog/fruits-catalog
+    ```
 
-3. **It's time to use Terraform** - That's not the final step, but at least, you don't have to do everything manually :)
+    Check that you have well imported your ressource:
+    <img width="800" alt="Terraform Import" src="../Assets/Step3_tf_import.png">
+
+3. **Analyze the code to understand what we're gonna do** - As always, we check the code before doing any further actions:
+    - Configure a K/V Secret Engine on Vault
+    - Create a specific service account (vault-auth) on K8s 
+    - Configure ClusterRoleBinding to give Role-Token_reviewer to the service account
+    - Enable and configure Kubernetes Auth method on Vault
+    - Populate K/V with MongoDB secrets needed by the app
+    - Create a policy to give read access to kv/fruits-catalog-mongodb
+    - Create a specifc role on kubernetes auth method attached to the specific policy
+
+4. **It's time to use Terraform** - That's not the final step, but at least, you don't have to do everything manually :)
     - Run terraform init to prepare the environment:
     ```bash
     $>terraform init
@@ -47,70 +58,58 @@ Of course, we will not cover how to [download](https://releases.hashicorp.com/te
 
     You should end up with something like this:
     
-    <img width="800" alt="Terraform Apply" src="../Assets/Step2_tfapply.png">
+    <img width="800" alt="Terraform Apply" src="../Assets/Step3_tf_apply.png">
 
-    **Store somewhere the admin password for Keycloak as it will be used in a later step**
+## Validate everything is working as expected
+Now, your application is using an init container which uses the service account token from K8s to: 
+- Connect to vault 
+- Retrieve the secrets
+- Register secrets in application.properties file in a shared volume 
 
-    You can also check the state of all the newly created pods by running the command:
+To ensure everything is work as expected, foolow the below steps.
+
+1. **Validate log on the init-container** - Here, we're gonna check if init-container was able to retrieve the secret and create the correct files.
+    - First, you need to launch the minikub's dashboard with that command:
     ```bash
-    $>kubectl get pods --all-namespaces
+    $>minikube dashboard
     ```
+    Your browser should popup with the Kubernetes Dashboard
 
-    <img width="800" alt="Checks Pods" src="../Assets/Step2_Pods.png">
-
-## Finalize Keycloak configuration
-As keycloak is now deployed and available on K8s in its own namespace and with its own certificate, we can connect to it and finalize the configuration by creating some users.
-
-1. **Login to admin console and create a user** - Keycloak is configured with 3 Roles (Admin, Manager, User) but without any user except the admin of the platform. So, let's create one to test our authn and authz.
-    - Connect to https://keycloak.testlab.local or whatever url you used and log in with 'adminKC' as user and the password that you gathered in terraform apply step:
-
-    <img width="800" alt="Keycloak Login" src="../Assets/Step2_Keycloak_login.png">
+    <img width="800" alt="K8S Dashboard" src="../Assets/Step3_k8s_dashboard.png">
     
-    - Select 'Admin Console', then 'Manage', then 'Users', then click on 'Add User', and finally configure a new user:
+    - Select the fruits-catalog namespace, then pods, then your fruits-catalog pod and finally click on **log**:
 
-    <img width="800" alt="Keycloak User" src="../Assets/Step2_Keycloak_user.png">
+    <img width="800" alt="Fruits Catalog Pod" src="../Assets/Step3_k8s_pod.png">
     
-    - Now, after creating the user, change its password and configure it as 'non temporary':
+    - Click on **logs from** and select **vault-init**, you should see no errors:
 
-    <img width="800" alt="Keycloak Password" src="../Assets/Step2_Keycloak_password.png">
+    <img width="800" alt="Vault-Init Log" src="../Assets/Step3_k8s_log.png">
 
-## Deploy the new version of the application
-Keycloak is configured, so, now, we need to deploy the new version of our app that included keycloak configuration and logic.
-
-1. **Git checkout to Keycloak branch** - First thing first, go the the keycloak branch of the secured-fruits-catalog-k8s repo.
-    - Do git checkout command below inside your secured-fruits-catalog-k8s repos:
+2. **Validate configuration files on spring-boot container**: Now, we want to check that we're really using the secrets from vault and not from Kubernetes.
+    - Connect to your container using that command:
     ```bash
-    $>git checkout keycloak
+    $>kubectl exec -ti fruits-catalog-8575f96cb4-dktdr -c spring-boot /bin/bash
     ```
-2. **Deploy the new version of the app** - As we added Keycloak in the logic of our application, we have to build it and deploy it to replace the old one.
-    - Now, use maven and Fabric8 plugin to do it:
-    ```bash
-    $>mvn fabric8:deploy -Pkubernetes
-    ```
-    You should see an output like this: 
 
-    <img width="800" alt="Fabric Build" src="../Assets/Step2_Fabric8.png">
+    <img width="800" alt="Pod Shell" src="../Assets/Step3_pod_shell.png">
 
-    - To make the application working, we need to modify the deployment for adding KEYCLOAK_URL as ENV variable:
-    ```bash
-    $>kubectl set env deploy/fruits-catalog KEYCLOAK_URL=https://keycloak.testlab.local/auth -n fruits-catalog
-    ```
-3. **Validate the AuthN and AuthZ workflow** - Everything is configured properly, so the last step is to test that everything works.
-    - Connect to 'https://fruits.testlab.local' and verify that now a login page appears:
+    - Go to /etc/app/ and read the application.properties. You should see something like this: 
 
-    <img width="800" alt="Fruits Login" src="../Assets/Step2_Fruits_login.png">
+    <img width="800" alt="Application Properties" src="../Assets/Step3_pod_app.png">
 
-    - Verify than you're logged in properly:
+3. **Connect to the app and validate all your datas are sitll there** - Finally, we connect to our apps to validate that all is working perfectly.
+    - Connect thru your browser to your application with https://fruits.testalb.local and enter your username and password configured in step 2.
+    
+    <img width="800" alt="Fruits Catalog Login" src="../Assets/Step3_app_login.png">
 
-    <img width="800" alt="Fruits Good" src="../Assets/Step2_Fruits_good.png">
+    - Vaildate that all your previous fruits are still there and that you can add more.
 
-    - Add a new fruit for validating everything is working:
+     <img width="800" alt="Fruits Catalog Working" src="../Assets/Step3app_working_.png">
 
-    <img width="800" alt="Fruits API" src="../Assets/Step2_Fruits_api.png">
 
-*Congrats*, you finally deploy and configure Keycloak to add AuthN and AuthZ to your application without modifying a lot of code in your app.
+*Congrats*, without touching your application code, you add a non negligeable security layer by externalizing and centralizing your secrets on Vault.
 
-We're ready to move on to step 4 and add Dynamic Secret management by using K8S Auth method.
+We're ready to move on to step 4 and add Dynamic Secret management to add anotehr layer of security.
 
 ## Special thanks
 

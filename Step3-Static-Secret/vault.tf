@@ -1,9 +1,10 @@
-resource "vault_mount" "Kv_store" {
+resource "vault_mount" "kv_store" {
   path = "kv"
   type = "kv"
+
   options = {
     version = 1
-  } 
+  }
 }
 
 resource "kubernetes_service_account" "vault-auth" {
@@ -12,9 +13,8 @@ resource "kubernetes_service_account" "vault-auth" {
     namespace = "${var.namespace}"
   }
 
-  automount_service_account_token = true 
+  automount_service_account_token = true
 }
-
 
 resource "kubernetes_cluster_role_binding" "vault-auth" {
   metadata {
@@ -45,10 +45,23 @@ resource "local_file" "minikube_auth" {
 }
 
 resource "null_resource" "minikube_auth_backend" {
-  depends_on = ["local_file.minikube_auth","vault_auth_backend.minikube","kubernetes_service_account.vault-auth"]
+  depends_on = ["local_file.minikube_auth", "vault_auth_backend.minikube", "kubernetes_service_account.vault-auth"]
 
   provisioner "local-exec" "K8s_auth_backend" {
     command = "${path.module}/files/minikube_auth.sh"
+  }
+}
+
+resource "local_file" "mongodb_kv" {
+  content  = "${data.template_file.mongodb_kv.rendered}"
+  filename = "${path.module}/files/mongodb_kv.sh"
+}
+
+resource "null_resource" "mongodb_kv" {
+  depends_on = ["local_file.mongodb_kv", "vault_mount.kv_store"]
+
+  provisioner "local-exec" "mongodb_kv" {
+    command = "${path.module}/files/mongodb_kv.sh"
   }
 }
 
