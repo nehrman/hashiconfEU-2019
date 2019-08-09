@@ -109,7 +109,7 @@ To ensure everything is work as expected, foolow the below steps.
 
 *Congrats*, without touching your application code, you add a non negligeable security layer by externalizing and centralizing your secrets on Vault.
 
-We're ready to move on to step 4 and add Dynamic Secret management to add anotehr layer of security.
+We're ready to move on to step 4 and add Dynamic Secret management to add another layer of security.
 
 ## Special thanks
 
