@@ -23,3 +23,12 @@ variable "mongodb_host" {
   default     = ""
 }
 
+variable "mongodb_nodeport" {
+  description = "Mongodb Node Port to use for Service"
+  default     = ""
+}
+
+variable "namespace" {
+  description = "Namespace where to deploy things on K8s"
+  default     = "fruits-catalog"
+}

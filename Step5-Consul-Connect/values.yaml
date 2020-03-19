@@ -2,22 +2,25 @@
 global:
   datacenter: minidc
   image: consul:latest
-  imageK8S: hashicorp/consul-k8s:0.8.1 
+  imageK8S: hashicorp/consul-k8s:0.9.0 
 
 # True if you want to enable the catalog sync. "-" for default.
-syncCatalog:
-  enabled: true
+#syncCatalog:
+#  enabled: true
 
 # Enable the Consul Web UI via a NodePort
 ui:
-  service:
-    type: 'NodePort'
+  enabled: true
+#  service:
+#    type: 'LoadBalancer'
 
 # Enable Connect for secure communication between nodes
 connectInject:
   enabled: true
-  imageConsul: consul:latest
-  imageEnvoy: envoyproxy/envoy-alpine:latest
+  certs:
+    secretName: null
+#  imageConsul: consul:latest
+#  imageEnvoy: envoyproxy/envoy-alpine:latest
 client:
   enabled: true
   grpc: true

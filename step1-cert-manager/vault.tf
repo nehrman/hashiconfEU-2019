@@ -12,7 +12,7 @@ resource "vault_pki_secret_backend_root_cert" "pki" {
   private_key_format = "der"
   key_type           = "rsa"
   key_bits           = 2048
-  common_name        = "testlab.local"
+  common_name        = "${var.commonname}"
   ttl                = "315360000"
 }
 
@@ -26,7 +26,7 @@ resource "vault_pki_secret_backend_intermediate_cert_request" "pki_int" {
 
   backend     = "${vault_pki_secret_backend.pki_int.path}"
   type        = "exported"
-  common_name = "testlab.local"
+  common_name = "${var.commonname}"
 }
 
 resource "vault_pki_secret_backend_root_sign_intermediate" "pki" {
@@ -35,7 +35,7 @@ resource "vault_pki_secret_backend_root_sign_intermediate" "pki" {
   backend = "${vault_pki_secret_backend.pki.path}"
 
   csr         = "${vault_pki_secret_backend_intermediate_cert_request.pki_int.csr}"
-  common_name = "testlab.local"
+  common_name = "${var.commonname}"
   ttl         = "157680000"
   format      = "pem_bundle"
 }

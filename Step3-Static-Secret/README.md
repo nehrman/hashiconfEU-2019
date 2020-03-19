@@ -14,7 +14,7 @@ Here are the technologies and features used in this demo:
 
 Like we did from the beginning of this demo, let's look at what we're gonna do in terms of workflow and architecture.
 
-<img width="800" alt="Step 2" src="../Assets/SecureYourApp_Step3.png">
+<img width="800" alt="Step 3" src="../Assets/SecureYourApp_Step3.png">
 
 ## Ok, now, we're ready to use terraform code to deploy step 3
 Of course, we will not cover how to [download](https://releases.hashicorp.com/terraform/) and [configure](https://learn.hashicorp.com/terraform/getting-started/install.html) it, as we supposed you already have it.
@@ -34,13 +34,13 @@ Of course, we will not cover how to [download](https://releases.hashicorp.com/te
     <img width="800" alt="Terraform Import" src="../Assets/Step3_tf_import.png">
 
 3. **Analyze the code to understand what we're gonna do** - As always, we check the code before doing any further actions:
-    - Configure a K/V Secret Engine on Vault
-    - Create a specific service account (vault-auth) on K8s 
-    - Configure ClusterRoleBinding to give Role-Token_reviewer to the service account
-    - Enable and configure Kubernetes Auth method on Vault
-    - Populate K/V with MongoDB secrets needed by the app
-    - Create a policy to give read access to kv/fruits-catalog-mongodb
-    - Create a specifc role on kubernetes auth method attached to the specific policy
+    - Configuring a K/V Secret Engine on Vault
+    - Creating a specific service account (vault-auth) on K8s 
+    - Configuring ClusterRoleBinding to give Role-Token_reviewer to the service account
+    - Enabling and configuring Kubernetes Auth method on Vault
+    - Populating K/V with MongoDB secrets needed by the app
+    - Creating a policy to give read access to kv/fruits-catalog-mongodb
+    - Creating a specifc role on kubernetes auth method attached to the specific policy
 
 4. **It's time to use Terraform** - That's not the final step, but at least, you don't have to do everything manually :)
     - Run terraform init to prepare the environment:
@@ -66,7 +66,7 @@ Now, your application is using an init container which uses the service account 
 - Retrieve the secrets
 - Register secrets in application.properties file in a shared volume 
 
-To ensure everything is work as expected, foolow the below steps.
+To ensure everything is work as expected, follow the below steps.
 
 1. **Validate log on the init-container** - Here, we're gonna check if init-container was able to retrieve the secret and create the correct files.
     - First, you need to launch the minikub's dashboard with that command:

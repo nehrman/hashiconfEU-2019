@@ -27,8 +27,6 @@ spec:
         deploymentconfig: mongodb
       annotations:
         consul.hashicorp.com/connect-inject: 'true'
-        consul.hashicorp.com/connect-service: mongodb
-        consul.hashicorp.com/connect-service-port: '27017'
     spec:
       volumes:
       - name: mongodb-data
